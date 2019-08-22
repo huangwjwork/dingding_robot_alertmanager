@@ -1,0 +1,174 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  labels:
+    k8s-app: test-prometheus
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 15s # By default, scrape targets every 15 seconds.
+      evaluation_interval: 15s
+
+      # Attach these labels to any time series or alerts when communicating with
+      # external systems (federation, remote storage, Alertmanager).
+      external_labels:
+        monitor: 'codelab-monitor'
+
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+    scrape_configs:
+      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+      - job_name: 'prometheus'
+
+        # Override the global default and scrape targets from this job every 5 seconds.
+        scrape_interval: 5s
+
+        static_configs:
+          - targets: ['localhost:9090']
+          - targets: ['test-exporter:10000']
+    rule_files:
+    - '/etc/prometheus/prometheus.rules'
+    alerting:
+      alertmanagers:
+        - scheme: http
+          static_configs:
+          - targets:
+            - "localhost:9093"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-rules
+  labels:
+    k8s-app: prometheus-rules
+data:
+  prometheus.rules: |-
+    groups:
+    - name: example
+      rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1s
+        labels:
+          severity: page
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  labels:
+    k8s-app: alertmanager-config
+data:
+  alertmanager.yml: |-
+    global:
+    templates: 
+    - '/etc/alertmanager/template/*.tmpl'
+    route:
+      group_by: ['alertname','job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 1h 
+      receiver: ops
+      routes:
+      - match:
+          job: prometheus
+        receiver: dev
+        
+    receivers:
+    - name: 'dev'
+      webhook_configs:
+      - send_resolved: true
+        url: 'http://192.168.0.3:8000'
+    - name: 'ops'
+      webhook_configs:
+      - send_resolved: true
+        url: 'http://192.168.0.3:8000'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-prometheus
+  labels:
+    app: test-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-prometheus
+  template:
+    metadata:
+      labels:
+        app: test-prometheus
+    spec:
+      containers:
+      - name: test-alertmanager
+        image: prom/alertmanager:v0.18.0
+        imagePullPolicy: IfNotPresent
+        command: 
+        - /bin/alertmanager
+        - --config.file=/etc/prometheus/alertmanager.yml
+        - --storage.path=/alertmanager 
+        ports:
+        - containerPort: 9093
+        volumeMounts:
+        - name: alertmanager-config
+          mountPath: /etc/prometheus/alertmanager.yml
+          subPath: alertmanager.yml
+      - name: test-prometheus
+        image: prom/prometheus:v2.11.2
+        imagePullPolicy: IfNotPresent
+        command: 
+        - /bin/prometheus
+        - --config.file=/etc/prometheus/prometheus.yml
+        - --storage.tsdb.path=/prometheus
+        - --web.console.libraries=/usr/share/prometheus/console_libraries
+        - --web.console.templates=/usr/share/prometheus/consoles
+        - --web.enable-lifecycle
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: prometheus-config
+          mountPath: /etc/prometheus/prometheus.yml
+          subPath: prometheus.yml
+        - name: prometheus-rules
+          mountPath: /etc/prometheus/prometheus.rules
+          subPath: prometheus.rules
+      volumes:
+      - name: prometheus-config
+        configMap:
+          defaultMode: 0777
+          name: prometheus-config
+      - name: prometheus-rules
+        configMap:
+          defaultMode: 0777
+          name: prometheus-rules
+      - name: alertmanager-config
+        configMap:
+          defaultMode: 0777
+          name: alertmanager-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: test-prometheus
+  name: test-prometheus
+spec:
+  ports:
+  - name: prometheus
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  - name: alertmanager
+    port: 9093
+    protocol: TCP
+    targetPort: 9093
+  selector:
+    app: test-prometheus
+  type: ClusterIP
