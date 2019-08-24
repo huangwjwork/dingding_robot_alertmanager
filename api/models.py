@@ -7,20 +7,20 @@ from django.db import models
 
 # Create your models here.
 class Receiver(models.Model):
-    receiver = models.CharField(primary_key=True, max_length=30)
-    dingding_robot_api = models.CharField(max_length=200)
+    receiver = models.CharField(max_length=30)
+    receiver_num = models.IntegerField()
+    dingtalk_robot_api = models.CharField(max_length=200)
 
     class Meta:
         db_table = 'receiver'
+        unique_together = ('receiver', 'receiver_num')
 
 
-class Alert_info(models.Model):
+class Alert(models.Model):
     id = models.AutoField(primary_key=True)
     alertname = models.CharField(max_length=100)
     instance = models.CharField(max_length=50)
     job = models.CharField(max_length=30)
-    monitor = models.CharField(max_length=30)
-    severity = models.CharField(max_length=30)
     startsAt = models.DateTimeField()
     endsAt = models.DateTimeField()
     receiver = models.CharField(max_length=30)
@@ -28,7 +28,12 @@ class Alert_info(models.Model):
     post_times = models.PositiveIntegerField()
 
     class Meta:
-        db_table = 'alert_info'
+        db_table = 'alert'
 
-    def get_webhook_url(self):
-        return Receiver.objects.get(receiver=self.receiver).dingding_robot_api
+    # def update_alert(self):
+    #     self.post_times += 1
+
+    # def resolved_alert(self):
+    #     self.status = 'resloved'
+
+
