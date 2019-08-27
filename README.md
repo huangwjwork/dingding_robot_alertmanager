@@ -99,7 +99,7 @@ python3 manage.py runserver 0.0.0.0:8000
 
 在后台receivers中添加钉钉机器人，同一receiver可以添加多个webhook，用receiver_num进行区分和标记
 
-![](images/admin-alerts.jpg)
+![](images/admin-receivers.jpg)
 
 alertmanager中添加receiver和route
 
