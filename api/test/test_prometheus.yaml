@@ -71,8 +71,8 @@ data:
     route:
       group_by: ['alertname','job']
       group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 1h 
+      group_interval: 15s
+      repeat_interval: 1m
       receiver: ops
       routes:
       - match:

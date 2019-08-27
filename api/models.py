@@ -29,11 +29,3 @@ class Alert(models.Model):
 
     class Meta:
         db_table = 'alert'
-
-    # def update_alert(self):
-    #     self.post_times += 1
-
-    # def resolved_alert(self):
-    #     self.status = 'resloved'
-
-

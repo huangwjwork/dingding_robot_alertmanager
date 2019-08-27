@@ -1,0 +1,14 @@
+certifi==2019.6.16
+chardet==3.0.4
+Django==2.1.8
+entrypoints==0.3
+flake8==3.7.8
+idna==2.8
+mccabe==0.6.1
+pycodestyle==2.5.0
+pyflakes==2.1.1
+PyMySQL==0.9.3
+pytz==2019.2
+requests==2.22.0
+urllib3==1.25.3
+yapf==0.28.0
