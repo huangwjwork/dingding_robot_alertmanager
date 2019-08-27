@@ -59,4 +59,4 @@ def alert_data(request):
     #     logger.error(e)
 
     else:
-        return HttpResponse('/admin')
+        return HttpResponse('<a href="/admin" >admin/</a>')

@@ -1,5 +1,7 @@
 # 基于django的alertmanager钉钉告警及告警记录
 
+![](images/grafana.jpg)
+
 基于django实现的alertmanager钉钉告警消息推送，同时记录推送的告警内容，包括告警名，实例，时间，次数，接收人等等  
 
 告警消息记录在mysql中，通过grafana查询mysql显示不同规则下TOP10的告警，当前未解除告警，以及最近100条告警记录  
@@ -93,10 +95,11 @@ python3 manage.py runserver 0.0.0.0:8000
 ```
 
 **django admin后台** http://localhost:8000/admin
+![](admin-index.jpg)
 
 在后台receivers中添加钉钉机器人，同一receiver可以添加多个webhook，用receiver_num进行区分和标记
 
-![](images/admin-alerts.bmp)
+![](images/admin-alerts.jpg)
 
 alertmanager中添加receiver和route
 
@@ -136,11 +139,8 @@ rpm -ivh https://dl.grafana.com/oss/release/grafana-6.3.3-1.x86_64.rpm
 
 
 
-![](images/grafana.bmp)
+![](images/grafana.jpg)
 
 钉钉告警
 
-![](images/alert.bmp)
-
-
-
+![](images/alert.jpg)
