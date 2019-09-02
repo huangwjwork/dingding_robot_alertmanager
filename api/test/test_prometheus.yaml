@@ -88,7 +88,40 @@ data:
       webhook_configs:
       - send_resolved: true
         url: 'http://192.168.0.3:8000'
+--- 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config2
+  labels:
+    k8s-app: alertmanager-config2
+data:
+  alertmanager.yml: |-
+    global:
+    templates: 
+    - '/etc/alertmanager/template/*.tmpl'
+    route:
+      group_by: ['alertname','job']
+      group_wait: 30s
+      group_interval: 15s
+      repeat_interval: 1m
+      receiver: ops
+      routes:
+      - match:
+          job: prometheus
+        receiver: dev
+        
+    receivers:
+    - name: 'dev'
+      webhook_configs:
+      - send_resolved: true
+        url: 'http://192.168.0.3:8000'
+    - name: 'ops'
+      webhook_configs:
+      - send_resolved: true
+        url: 'http://192.168.0.3:8000'
 ---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -115,6 +148,19 @@ spec:
         - --storage.path=/alertmanager 
         ports:
         - containerPort: 9093
+        volumeMounts:
+        - name: alertmanager-config
+          mountPath: /etc/prometheus/alertmanager.yml
+          subPath: alertmanager.yml
+      - name: test-alertmanager
+        image: prom/alertmanager:v0.18.0
+        imagePullPolicy: IfNotPresent
+        command: 
+        - /bin/alertmanager
+        - --config.file=/etc/prometheus/alertmanager.yml
+        - --storage.path=/alertmanager 
+        ports:
+        - containerPort: 9094
         volumeMounts:
         - name: alertmanager-config
           mountPath: /etc/prometheus/alertmanager.yml

@@ -23,7 +23,7 @@ def alert_data(request):
                           status=status,
                           dingtalk_robot_api=receivers[0])
             # 将刚才发送过消息的接口移到列表最后一位，实现dingtalk接口轮询
-            receivers = (list(receivers[1:]) + list(receivers[0])
+            receivers = (receivers[1:] + [(receivers[0]]
                          if len(receivers) > 1 else receivers)
             # 查询当前告警是否在数据库
             q1 = Alert.objects.filter(alertname=a['labels']['alertname'],
@@ -59,4 +59,4 @@ def alert_data(request):
     #     logger.error(e)
 
     else:
-        return HttpResponse('<a href="/admin" >admin/</a>')
+        return HttpResponse('<a href="/admin" >/admin/</a>')
