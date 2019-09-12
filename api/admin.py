@@ -8,11 +8,11 @@ class ReceiverAdmin(admin.ModelAdmin):
     ordering = ('receiver', 'receiver_num')
 
 
-# class AlertAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'status', 'alertname', 'instance', 'job', 'startsAt',
-#                     'endsAt', 'receiver', 'post_times')
-#     ordering = ('id', 'startsAt')
+class AlertAdmin(admin.ModelAdmin):
+    list_display = ('id', 'status', 'alertname', 'instance', 'job', 'startsAt',
+                    'endsAt', 'receiver', 'post_times')
+    ordering = ('id', 'startsAt')
 
 
 admin.site.register(Receiver, ReceiverAdmin)
-# admin.site.register(Alert, AlertAdmin)
+admin.site.register(Alert, AlertAdmin)
