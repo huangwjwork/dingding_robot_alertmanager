@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 import json
 from api.dingtalk import query_dingtalk_api, post_dingtalk
-from api.models import Alert, Receiver
+from api.models import Alert
+import re
 
 
 # Create your views here.
@@ -16,12 +17,23 @@ def alert_data(request):
         receivers = query_dingtalk_api(receiver)
         # 获取告警状态 firing or resolved
         status = receive_json_data['status']
+        # 根据告警状态选择模板
+        template_file = ('msg-templates/firing-msg-template.md'
+                         if status == 'firing' else
+                         'msg-templates/resolved-msg-template.md')
+        # 读取模板文件
+        with open(template_file, 'r') as f:
+            template = f.read()
+        # 正则匹配出所有的变量
+        key_words = re.findall('\{\$(.*?)\}', template)
         # 遍历告警列表
         for a in receive_json_data['alerts']:
             # 发送告警信息，dingtalk接口为列表元素0
             post_dingtalk(alert_json=a,
                           status=status,
-                          dingtalk_robot_api=receivers[0])
+                          dingtalk_robot_api=receivers[0],
+                          template=template,
+                          key_words=key_words)
             # 将刚才发送过消息的接口移到列表最后一位，实现dingtalk接口轮询
             receivers = (receivers[1:] +
                          [receivers[0]] if len(receivers) > 1 else receivers)

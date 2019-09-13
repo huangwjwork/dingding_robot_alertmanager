@@ -14,17 +14,8 @@ def query_dingtalk_api(receiver):
 
 
 # 将告警json格式化为Markdown并发送到dingtalk，若模板出错则采用默认格式化发送
-def post_dingtalk(alert_json, status, dingtalk_robot_api):
+def post_dingtalk(alert_json, status, dingtalk_robot_api, template, key_words):
     try:
-        # 根据告警状态选择模板
-        template_file = ('msg-templates/firing-msg-template.md'
-                         if status == 'firing' else
-                         'msg-templates/resolved-msg-template.md')
-        # 读取模板文件
-        with open(template_file, 'r') as f:
-            template = f.read()
-        # 正则匹配出所有的变量
-        key_words = re.findall('\{\$(.*?)\}', template)
         msg = template
         # 根据变量名按条件替换变量
         for key_word in key_words:

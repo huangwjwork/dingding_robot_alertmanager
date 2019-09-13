@@ -12,6 +12,14 @@
 
 目前还处于学习阶段，实现的比较粗糙，也没有做异常处理，有问题请在issue中指出
 
+## release note
+
+### v0.1.1  
+新增告警模板支持
+
+### v0.1  
+实现基本功能
+
 ## 开发环境
 
 ```
@@ -139,11 +147,49 @@ receivers:
 ```shell
 rpm -ivh https://dl.grafana.com/oss/release/grafana-6.3.3-1.x86_64.rpm
 ```
-
-
-
 ![](images/grafana.jpg)
 
-钉钉告警
 
+## 自定义告警模板
+
+```
+├── msg-templates   # 告警模板文件
+│   ├── firing-msg-template.md  # firing模板
+│   └── resolved-msg-template.md    # resolved模板
+```
+msg-templates中定义了两个Markdown格式的template，分别对应firing和resolved告警信息。需要传递自定义label请按照如下格式进行传递:  
+`{$var}`  
+
+演示模板如下:
+```markdown
+## {$status} : {$summary}  
+**告警名称**: {$alertname}  
+**实例**: {$instance}  
+**job**: {$job}  
+**monitor**: {$monitor}  
+**告警等级**: {$severity}  
+**起始时间**: {$startsAt}  
+**详细描述**: {$description}  
+```  
+格式化告警效果如下:   
+![](images/格式化告警.jpg)
+
+如果模板中定义了告警信息中不包含的labels，则不会匹配告警模板，按照非格式化模板推送告警信息  
+
+非格式化告警效果如下:
 ![](images/alert.jpg)
+
+如果收到上述告警，请查看alertmanager，并检查模板中定义的labels是否在监控job或告警信息中体现  
+
+### 关于模板中的变量字段说明
+默认字段为alertmanager官方字段  
+|字段|说明|
+|:-:|:-:|
+|status|默认字段，状态，firing或resolved|
+|alertname|默认字段：alert rule中的rule字段|
+|instance|默认字段：告警的instance|
+|job|默认字段：prometheus.yml中的target job|
+|monitor|默认字段：prometheus.yml中的monitor|
+|severity|自定义字段：prometueus.rules中自定义label|
+|description|默认字段：rule中的description|
+|summary|默认字段：rule中的description|
