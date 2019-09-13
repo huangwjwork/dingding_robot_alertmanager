@@ -54,6 +54,9 @@ dingding_robot_alertmanager/
 │   ├── admin-receivers.bmp
 │   ├── alert.bmp
 │   └── grafana.bmp
+├── msg-templates   # 告警模板文件
+│   ├── firing-msg-template.md  # firing模板
+│   └── resolved-msg-template.md    # resolved模板
 ├── manage.py
 ├── README.md
 └── requirements.txt	# pip依赖
