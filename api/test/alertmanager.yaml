@@ -72,6 +72,8 @@ metadata:
     app: alertmanager1
   name: alertmanager1
 spec:
+  type: ClusterIP
+  clusterIP: 10.100.0.2
   ports:
   - name: alertmanager1
     port: 9093
@@ -79,7 +81,6 @@ spec:
     targetPort: 9093
   selector:
     app: alertmanager1
-  type: ClusterIP
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -125,6 +126,8 @@ metadata:
     app: alertmanager2
   name: alertmanager2
 spec:
+  type: ClusterIP
+  clusterIP: 10.100.0.3
   ports:
   - name: alertmanager2
     port: 9093
@@ -132,4 +135,3 @@ spec:
     targetPort: 9093
   selector:
     app: alertmanager2
-  type: ClusterIP
