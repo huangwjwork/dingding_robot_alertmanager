@@ -183,6 +183,7 @@ msg-templates中定义了两个Markdown格式的template，分别对应firing和
 
 ### 关于模板中的变量字段说明
 默认字段为alertmanager官方字段  
+
 |字段|说明|  
 |:-:|:-:|  
 |status|默认字段，状态，firing或resolved|  
