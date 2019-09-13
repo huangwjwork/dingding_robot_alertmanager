@@ -177,19 +177,22 @@ msg-templates中定义了两个Markdown格式的template，分别对应firing和
 如果模板中定义了告警信息中不包含的labels，则不会匹配告警模板，按照非格式化模板推送告警信息  
 
 非格式化告警效果如下:
-![](images/alert.jpg)
+![](images/非格式化告警.jpg)
 
 如果收到上述告警，请查看alertmanager，并检查模板中定义的labels是否在监控job或告警信息中体现  
 
 ### 关于模板中的变量字段说明
 默认字段为alertmanager官方字段  
-|字段|说明|
-|:-:|:-:|
-|status|默认字段，状态，firing或resolved|
-|alertname|默认字段：alert rule中的rule字段|
-|instance|默认字段：告警的instance|
-|job|默认字段：prometheus.yml中的target job|
-|monitor|默认字段：prometheus.yml中的monitor|
-|severity|自定义字段：prometueus.rules中自定义label|
-|description|默认字段：rule中的description|
-|summary|默认字段：rule中的description|
+|字段|说明|  
+|:-:|:-:|  
+|status|默认字段，状态，firing或resolved|  
+|alertname|默认字段：alert rule中的rule字段|  
+|instance|默认字段：告警的instance|   
+|job|默认字段，prometheus.yml中的target job|  
+|monitor|默认字段，prometheus.yml中的monitor|  
+|description|默认字段，rule中的description|  
+|summary|默认字段，rule中的description|  
+|startsAt|默认字段，告警开始时间|  
+|endsAt|默认字段，告警结束时间|  
+|severity|自定义字段，prometueus.rules中自定义label|  
+|generatorURL|默认字段，告警详情url|  
