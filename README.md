@@ -92,7 +92,7 @@ mysql建表
 
 ```
 python3 manage.py makemigrations api
-python manage.py migrate
+python3 manage.py migrate
 ```
 
 创建django admin后台管理员账号
@@ -192,10 +192,10 @@ msg-templates中定义了两个Markdown格式的template，分别对应firing和
 |alertname|默认字段，alert rule中的rule字段|  
 |instance|默认字段，告警的instance|   
 |job|默认字段，prometheus.yml中的target job|  
-|monitor|默认字段，prometheus.yml中的monitor|  
-|description|默认字段，rule中的description|  
-|summary|默认字段，rule中的description|  
+|description|默认可选字段，rule中的description|  
+|summary|默认可选字段，rule中的description|  
 |startsAt|默认字段，告警开始时间|  
 |endsAt|默认字段，告警结束时间|  
 |generatorURL|默认字段，告警详情url|  
+|monitor|默认可选字段，prometheus.yml中的monitor字段，|  
 |severity|自定义字段，prometueus.rules中自定义label|  
