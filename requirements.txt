@@ -10,5 +10,5 @@ pyflakes==2.1.1
 PyMySQL==0.9.3
 pytz==2019.2
 requests==2.22.0
-urllib3==1.25.3
+urllib3==1.26.5
 yapf==0.28.0
