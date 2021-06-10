@@ -1,6 +1,6 @@
 certifi==2019.6.16
 chardet==3.0.4
-Django==2.1.8
+Django==2.2.24
 entrypoints==0.3
 flake8==3.7.8
 idna==2.8
